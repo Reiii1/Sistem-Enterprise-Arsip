@@ -4,36 +4,207 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>E-Arsip Enterprise Dashboard</title>
+  <meta name="description" content="Sistem Manajemen Dokumen & Arsip Digital Enterprise">
   <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
+  
+  <!-- Open Graph (untuk share link) -->
+  <meta property="og:title" content="E-Arsip Enterprise Dashboard">
+  <meta property="og:description" content="Sistem Manajemen Dokumen & Arsip Digital">
+  <meta property="og:type" content="website">
+
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #0f172a; /* Slate 900 */
+      background-color: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
+
     #app-frame {
       width: 100%;
       height: 100%;
       border: none;
       display: block;
+      background-color: #0f172a;
+    }
+
+    /* Loading screen sebelum iframe selesai dimuat */
+    #loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      z-index: 9999;
+      transition: opacity 0.4s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(99, 102, 241, 0.2);
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-title {
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+
+    .loader-sub {
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Error fallback kalau iframe gagal dimuat */
+    #error-fallback {
+      display: none;
+      position: fixed;
+      inset: 0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 24px;
+      text-align: center;
+      z-index: 10000;
+    }
+
+    #error-fallback.visible {
+      display: flex;
+    }
+
+    #error-fallback h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #f87171;
+    }
+
+    #error-fallback p {
+      font-size: 13px;
+      color: #94a3b8;
+      max-width: 400px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    #error-fallback button {
+      padding: 10px 24px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #error-fallback button:hover {
+      background: #4f46e5;
     }
   </style>
 </head>
 <body>
-  <!-- 
-    Izin geolocation & clipboard wajib disertakan di atribut allow 
-    agar fitur pencatatan koordinat GPS & copy file bekerja di dalam iframe Vercel
-  -->
+  
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="loader-title">E-Arsip Enterprise</div>
+    <div class="loader-sub">Memuat dashboard...</div>
+  </div>
+
+  <!-- Error Fallback -->
+  <div id="error-fallback">
+    <h2>⚠️ Gagal Memuat Dashboard</h2>
+    <p>
+      Tidak dapat terhubung ke server Apps Script.<br>
+      Periksa koneksi internet Anda atau coba beberapa saat lagi.
+    </p>
+    <button onclick="location.reload()">🔄 Muat Ulang</button>
+  </div>
+
+  <!-- Iframe Aplikasi E-Arsip (Apps Script Backend) -->
   <iframe 
     id="app-frame"
     src="https://script.google.com/macros/s/AKfycbze7e3AbTLwFsKJEPhdx2siHjGOIkJ9suiBgp2E2As3JQ2oMGna7EVtXRcHwXgM299lWw/exec" 
-    allow="geolocation; clipboard-read; clipboard-write; camera">
+    allow="geolocation; clipboard-read; clipboard-write; camera; microphone; fullscreen"
+    allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade"
+    loading="eager"
+    title="E-Arsip Enterprise Dashboard">
   </iframe>
+
+  <script>
+    (function() {
+      const iframe = document.getElementById('app-frame');
+      const loader = document.getElementById('loader');
+      const errorFallback = document.getElementById('error-fallback');
+      let loaded = false;
+
+      // Sembunyikan loader ketika iframe selesai dimuat
+      iframe.addEventListener('load', function() {
+        loaded = true;
+        setTimeout(() => {
+          loader.classList.add('hidden');
+        }, 300);
+      });
+
+      // Timeout fallback: kalau 15 detik belum load, tampilkan error
+      setTimeout(() => {
+        if (!loaded) {
+          loader.classList.add('hidden');
+          errorFallback.classList.add('visible');
+        }
+      }, 15000);
+
+      // Handle keyboard shortcut untuk refresh (Ctrl+R / F5)
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+          location.reload();
+        }
+        if (e.key === 'F5') {
+          e.preventDefault();
+          location.reload();
+        }
+      });
+
+      // Cegah zoom berlebih di mobile (double tap)
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, { passive: false });
+    })();
+  </script>
 </body>
 </html>
