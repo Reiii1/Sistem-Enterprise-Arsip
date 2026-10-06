@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>E-Arsip Enterprise Dashboard</title>
+  <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0f172a; /* Slate 900 */
+    }
+    #app-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+    Izin geolocation & clipboard wajib disertakan di atribut allow 
+    agar fitur pencatatan koordinat GPS & copy file bekerja di dalam iframe Vercel
+  -->
+  <iframe 
+    id="app-frame"
+    src="https://script.google.com/macros/s/AKfycbzXRi56od1YH1OuMQYmYTLk89f77v-7glnd03BMPdBg/exec" 
+    allow="geolocation; clipboard-read; clipboard-write; camera">
+  </iframe>
+</body>
+</html>
