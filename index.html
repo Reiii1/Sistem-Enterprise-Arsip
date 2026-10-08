@@ -50,9 +50,8 @@
   <!-- NAVBAR / HEADER -->
   <header class="w-full pt-8 pb-4 px-6 max-w-2xl mx-auto flex justify-between items-center">
     <div class="flex items-center gap-3">
-      <!-- Logo Himpunan Placeholder -->
       <div id="logo-container" class="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm tracking-tighter">
-        HA
+        HM
       </div>
       <span id="org-name-header" class="text-xs uppercase tracking-widest font-semibold text-neutral-500">
         [NAMA HIMPUNAN]
@@ -182,14 +181,9 @@
   <!-- FOOTER -->
   <footer class="w-full border-t border-neutral-200/70 py-8 px-6 text-center text-xs text-neutral-400">
     <div class="max-w-2xl mx-auto space-y-2">
-      <p class="font-bold tracking-wider text-neutral-700 uppercase" id="footer-org">[NAMA HIMPUNAN]</p>
+      <p class="font-bold tracking-wider text-neutral-700 uppercase" id="footer-org">HIMPUNAN MAHASISWA</p>
       <p class="tracking-wide">STAFF ALPHA & PPUH <span id="footer-year">2026</span></p>
       <p class="italic text-neutral-400">“Your journey starts here.”</p>
-      <div id="footer-ig-container" class="pt-2">
-        <a id="footer-ig" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-600 transition-colors">
-          Instagram
-        </a>
-      </div>
     </div>
   </footer>
 
@@ -199,9 +193,9 @@
     // CONFIGURATION FRONTEND
     // ==========================================
     const CONFIG = {
-      // URL yang Anda minta sudah dimasukkan di bawah ini
-      APPS_SCRIPT_URL: "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnSbqlFUIv2NojkeAJ1jg6l4EAOuiLqvj_kcWkEyQ3RzFPht1lb2GfMPFbVb_cCFk5tcTmI3R1GSp0Y3AOchtLi3baoFx4td8qzJhdLoTnJ8KDbd99wwEETRHuGbht9R2qjpkYkdmmhpO5MqTPp30QbkQLFqvgjm6o2yEygBGq15YwCHpkyUBVcKZ6fMjro0fH6IrAXAc4ioZ0ErANrFiK-vcfel3ywlM9WTuOeEG56-MElTAFBFJDSQ59NCUPapBaR9p2Iwukp_oZHe5PhbCoR6dxizcg&lib=MY1PAFvqiE4U5f3umtZnL_sTCOFP7uHZb",
-      ORGANIZATION_NAME: "Himpunan Mahasiswa",
+      // URL ASLI DARI APPS SCRIPT SUDAH DIMASUKKAN DI SINI
+      APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwKrVSots96FliSNZ2yVUJbLyALloA4tS34Ye2-KiFH3Li6pLp2CIweMpgh8xvr6Log/exec",
+      ORGANIZATION_NAME: "HIMPUNAN MAHASISWA",
       YEAR: "2026",
       LOGO_TEXT: "HM", 
       LOGO_URL: "",    
@@ -220,19 +214,11 @@
     const nimInput = document.getElementById('nim-input');
     const validationMsg = document.getElementById('validation-msg');
 
-    // Inisialisasi Teks & Konfigurasi ke View
+    // Inisialisasi Teks
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('org-name-header').textContent = CONFIG.ORGANIZATION_NAME;
       document.getElementById('footer-org').textContent = CONFIG.ORGANIZATION_NAME;
-      document.getElementById('footer-year').textContent = CONFIG.YEAR;
       
-      const igEl = document.getElementById('footer-ig');
-      if (CONFIG.INSTAGRAM_URL) {
-        igEl.href = CONFIG.INSTAGRAM_URL;
-      } else {
-        document.getElementById('footer-ig-container').classList.add('hidden');
-      }
-
       const logoContainer = document.getElementById('logo-container');
       if (CONFIG.LOGO_URL) {
         logoContainer.innerHTML = `<img src="${CONFIG.LOGO_URL}" alt="Logo" class="w-full h-full object-cover rounded-full" />`;
@@ -260,7 +246,6 @@
       e.preventDefault();
       const rawNim = nimInput.value.trim();
 
-      // Validasi Input Kosong
       if (!rawNim) {
         validationMsg.textContent = "PLEASE ENTER YOUR NIM";
         validationMsg.classList.remove('hidden');
@@ -268,7 +253,6 @@
         return;
       }
 
-      // Validasi Format NIM
       const validPattern = /^[a-zA-Z0-9]+$/;
       if (!validPattern.test(rawNim)) {
         validationMsg.textContent = "INVALID NIM. Please check your NIM and try again.";
@@ -280,7 +264,8 @@
       showView(loadingView);
 
       try {
-        const fetchUrl = `${CONFIG.APPS_SCRIPT_URL}&action=check&nim=${encodeURIComponent(rawNim)}`;
+        // PERBAIKAN: Menggunakan tanda tanya (?) setelah URL exec
+        const fetchUrl = `${CONFIG.APPS_SCRIPT_URL}?action=check&nim=${encodeURIComponent(rawNim)}`;
         const response = await fetch(fetchUrl);
 
         if (!response.ok) {
@@ -289,13 +274,13 @@
 
         const data = await response.json();
 
-        // 1. CASE: NOT FOUND
+        // CASE 1: NOT FOUND
         if (!data || !data.found) {
           showView(resultNotFound);
           return;
         }
 
-        // 2. CASE: LULUS
+        // CASE 2: LULUS
         if (data.status === "LULUS") {
           document.getElementById('success-nama').textContent = data.nama || "PESERTA";
           
@@ -311,7 +296,6 @@
               komisiBox.classList.add('hidden');
             }
           } else {
-            // Program PPUH
             document.getElementById('success-program').textContent = "PPUH 2026";
             komisiBox.classList.add('hidden'); 
           }
@@ -320,7 +304,7 @@
           return;
         }
 
-        // 3. CASE: STATUS KOSONG (TIDAK LULUS)
+        // CASE 3: STATUS KOSONG (TIDAK LULUS)
         document.getElementById('unsuccessful-nama').textContent = data.nama || "PESERTA";
         showView(resultUnsuccessful);
 
