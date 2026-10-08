@@ -3,30 +3,332 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Arsip Enterprise Dashboard</title>
-  <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #0f172a;
+  <title>Result Checker — Staff Alpha & PPUH 2026</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              900: '#0f172a',
+              accent: '#2563eb', 
+            }
+          }
+        }
+      }
     }
-    #app-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
+  </script>
+  <style>
+    .fade-scale-in {
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.98) translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
   </style>
 </head>
-<body>
-  <iframe 
-    id="app-frame"
-    src="https://script.google.com/macros/s/AKfycbwSVWlmIG0_3XvjL7ocRZI9V4g_yjiw5_uekhXthpyy72bC5HbmjTbrOrJ9uYpRxabEg/exec"
-    allow="geolocation; clipboard-read; clipboard-write; camera; microphone; fullscreen"
-    allowfullscreen>
-  </iframe>
+<body class="bg-[#fafafa] text-[#111111] font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-neutral-900 selection:text-white">
+
+  <!-- NAVBAR / HEADER -->
+  <header class="w-full pt-8 pb-4 px-6 max-w-2xl mx-auto flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <!-- Logo Himpunan Placeholder -->
+      <div id="logo-container" class="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm tracking-tighter">
+        HA
+      </div>
+      <span id="org-name-header" class="text-xs uppercase tracking-widest font-semibold text-neutral-500">
+        [NAMA HIMPUNAN]
+      </span>
+    </div>
+    <span class="text-xs font-mono px-2.5 py-1 bg-neutral-200/60 rounded-full text-neutral-600">2026</span>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="w-full max-w-xl mx-auto px-6 py-8 flex-1 flex flex-col justify-center">
+
+    <!-- 1. FORM SECTION (Default) -->
+    <div id="form-view" class="fade-scale-in">
+      <div class="mb-10 text-center sm:text-left">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-950 leading-[1.1] mb-4">
+          YOUR JOURNEY<br>STARTS HERE.
+        </h1>
+        <p class="text-neutral-500 text-sm sm:text-base font-normal">
+          Check your Staff Alpha & PPUH 2026 selection result.
+        </p>
+      </div>
+
+      <form id="check-form" class="space-y-4">
+        <div>
+          <label for="nim-input" class="block text-xs uppercase tracking-wider font-semibold text-neutral-600 mb-2">
+            Masukkan NIM
+          </label>
+          <input 
+            type="text" 
+            id="nim-input" 
+            placeholder="Enter your NIM" 
+            autocomplete="off"
+            class="w-full px-4 py-3.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder-neutral-400 font-mono text-base focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all shadow-sm"
+          >
+          <p id="validation-msg" class="hidden text-xs text-rose-500 mt-2 font-medium"></p>
+        </div>
+
+        <button 
+          type="submit" 
+          id="btn-submit"
+          class="w-full py-4 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold text-sm tracking-wider uppercase rounded-xl transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2"
+        >
+          <span>CHECK RESULT</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 2. LOADING STATE -->
+    <div id="loading-view" class="hidden text-center py-16 fade-scale-in">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-neutral-300 border-t-neutral-900 mb-4"></div>
+      <p class="text-xs uppercase tracking-widest text-neutral-400 font-semibold">Verifying credentials...</p>
+    </div>
+
+    <!-- 3. RESULT: LULUS (CONGRATULATIONS) -->
+    <div id="result-success" class="hidden text-center py-6 fade-scale-in">
+      <div class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+        CONGRATULATIONS! 🎉
+      </div>
+      <h2 id="success-nama" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-neutral-950 uppercase mb-4">
+        [NAMA PESERTA]
+      </h2>
+      <p class="text-neutral-500 text-sm font-medium mb-1">You’re officially part of</p>
+      <div id="success-program" class="text-2xl font-bold tracking-tight text-neutral-900 mb-1">
+        STAFF ALPHA 2026
+      </div>
+      <div id="success-komisi-box" class="text-sm font-semibold text-neutral-700 bg-neutral-100 py-1.5 px-4 rounded-full inline-block mb-8">
+        Komisi <span id="success-komisi">[KOMISI]</span>
+      </div>
+      <p class="text-neutral-400 text-xs italic tracking-wide">“Welcome to the journey.”</p>
+      
+      <button onclick="resetView()" class="mt-10 w-full py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold text-xs uppercase tracking-widest rounded-xl transition-all">
+        CHECK ANOTHER NIM
+      </button>
+    </div>
+
+    <!-- 4. RESULT: TIDAK LULUS (THANK YOU) -->
+    <div id="result-unsuccessful" class="hidden text-center py-6 fade-scale-in">
+      <div class="inline-block px-3 py-1 bg-neutral-100 text-neutral-600 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+        THANK YOU FOR YOUR JOURNEY.
+      </div>
+      <h2 id="unsuccessful-nama" class="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-950 uppercase mb-6">
+        [NAMA PESERTA]
+      </h2>
+      <div class="space-y-4 max-w-md mx-auto text-neutral-600 text-sm leading-relaxed mb-8">
+        <p>“Terima kasih telah mengikuti seluruh rangkaian seleksi Staff Alpha & PPUH 2026.”</p>
+        <p>“Setelah melalui proses seleksi, kamu belum berhasil menjadi bagian dari Staff Alpha & PPUH 2026.”</p>
+        <p class="text-neutral-400 text-xs italic">“Jangan berhenti bertumbuh. Masih banyak kesempatan dan perjalanan lain yang menunggu.”</p>
+      </div>
+
+      <button onclick="resetView()" class="w-full py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold text-xs uppercase tracking-widest rounded-xl transition-all">
+        CHECK ANOTHER NIM
+      </button>
+    </div>
+
+    <!-- 5. RESULT: NOT FOUND -->
+    <div id="result-not-found" class="hidden text-center py-8 fade-scale-in">
+      <div class="inline-block px-3 py-1 bg-amber-50 text-amber-700 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+        NOT FOUND
+      </div>
+      <h2 class="text-xl font-bold text-neutral-900 mb-3">Data dengan NIM tersebut tidak ditemukan.</h2>
+      <p class="text-neutral-500 text-sm max-w-sm mx-auto mb-8">
+        Pastikan NIM yang kamu masukkan sudah benar dan sesuai dengan data pendaftaran.
+      </p>
+
+      <button onclick="resetView()" class="w-full py-3.5 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold text-xs uppercase tracking-widest rounded-xl transition-all">
+        CHECK ANOTHER NIM
+      </button>
+    </div>
+
+    <!-- 6. RESULT: ERROR -->
+    <div id="result-error" class="hidden text-center py-8 fade-scale-in">
+      <div class="inline-block px-3 py-1 bg-rose-50 text-rose-600 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+        SOMETHING WENT WRONG
+      </div>
+      <h2 class="text-xl font-bold text-neutral-900 mb-3">Terjadi kesalahan saat mengambil hasil.</h2>
+      <p class="text-neutral-500 text-sm max-w-sm mx-auto mb-8">
+        Silakan periksa koneksi internet Anda atau coba beberapa saat lagi.
+      </p>
+
+      <button onclick="resetView()" class="w-full py-3.5 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold text-xs uppercase tracking-widest rounded-xl transition-all">
+        TRY AGAIN
+      </button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full border-t border-neutral-200/70 py-8 px-6 text-center text-xs text-neutral-400">
+    <div class="max-w-2xl mx-auto space-y-2">
+      <p class="font-bold tracking-wider text-neutral-700 uppercase" id="footer-org">[NAMA HIMPUNAN]</p>
+      <p class="tracking-wide">STAFF ALPHA & PPUH <span id="footer-year">2026</span></p>
+      <p class="italic text-neutral-400">“Your journey starts here.”</p>
+      <div id="footer-ig-container" class="pt-2">
+        <a id="footer-ig" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-600 transition-colors">
+          Instagram
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT FRONTEND -->
+  <script>
+    // ==========================================
+    // CONFIGURATION FRONTEND
+    // ==========================================
+    const CONFIG = {
+      // URL yang Anda minta sudah dimasukkan di bawah ini
+      APPS_SCRIPT_URL: "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnSbqlFUIv2NojkeAJ1jg6l4EAOuiLqvj_kcWkEyQ3RzFPht1lb2GfMPFbVb_cCFk5tcTmI3R1GSp0Y3AOchtLi3baoFx4td8qzJhdLoTnJ8KDbd99wwEETRHuGbht9R2qjpkYkdmmhpO5MqTPp30QbkQLFqvgjm6o2yEygBGq15YwCHpkyUBVcKZ6fMjro0fH6IrAXAc4ioZ0ErANrFiK-vcfel3ywlM9WTuOeEG56-MElTAFBFJDSQ59NCUPapBaR9p2Iwukp_oZHe5PhbCoR6dxizcg&lib=MY1PAFvqiE4U5f3umtZnL_sTCOFP7uHZb",
+      ORGANIZATION_NAME: "Himpunan Mahasiswa",
+      YEAR: "2026",
+      LOGO_TEXT: "HM", 
+      LOGO_URL: "",    
+      INSTAGRAM_URL: ""
+    };
+
+    // DOM Elements
+    const formView = document.getElementById('form-view');
+    const loadingView = document.getElementById('loading-view');
+    const resultSuccess = document.getElementById('result-success');
+    const resultUnsuccessful = document.getElementById('result-unsuccessful');
+    const resultNotFound = document.getElementById('result-not-found');
+    const resultError = document.getElementById('result-error');
+
+    const form = document.getElementById('check-form');
+    const nimInput = document.getElementById('nim-input');
+    const validationMsg = document.getElementById('validation-msg');
+
+    // Inisialisasi Teks & Konfigurasi ke View
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById('org-name-header').textContent = CONFIG.ORGANIZATION_NAME;
+      document.getElementById('footer-org').textContent = CONFIG.ORGANIZATION_NAME;
+      document.getElementById('footer-year').textContent = CONFIG.YEAR;
+      
+      const igEl = document.getElementById('footer-ig');
+      if (CONFIG.INSTAGRAM_URL) {
+        igEl.href = CONFIG.INSTAGRAM_URL;
+      } else {
+        document.getElementById('footer-ig-container').classList.add('hidden');
+      }
+
+      const logoContainer = document.getElementById('logo-container');
+      if (CONFIG.LOGO_URL) {
+        logoContainer.innerHTML = `<img src="${CONFIG.LOGO_URL}" alt="Logo" class="w-full h-full object-cover rounded-full" />`;
+      } else {
+        logoContainer.textContent = CONFIG.LOGO_TEXT;
+      }
+    });
+
+    function showView(viewElement) {
+      [formView, loadingView, resultSuccess, resultUnsuccessful, resultNotFound, resultError].forEach(el => {
+        el.classList.add('hidden');
+      });
+      viewElement.classList.remove('hidden');
+    }
+
+    function resetView() {
+      nimInput.value = '';
+      validationMsg.classList.add('hidden');
+      validationMsg.textContent = '';
+      showView(formView);
+      nimInput.focus();
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rawNim = nimInput.value.trim();
+
+      // Validasi Input Kosong
+      if (!rawNim) {
+        validationMsg.textContent = "PLEASE ENTER YOUR NIM";
+        validationMsg.classList.remove('hidden');
+        nimInput.focus();
+        return;
+      }
+
+      // Validasi Format NIM
+      const validPattern = /^[a-zA-Z0-9]+$/;
+      if (!validPattern.test(rawNim)) {
+        validationMsg.textContent = "INVALID NIM. Please check your NIM and try again.";
+        validationMsg.classList.remove('hidden');
+        return;
+      }
+
+      validationMsg.classList.add('hidden');
+      showView(loadingView);
+
+      try {
+        const fetchUrl = `${CONFIG.APPS_SCRIPT_URL}&action=check&nim=${encodeURIComponent(rawNim)}`;
+        const response = await fetch(fetchUrl);
+
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+
+        const data = await response.json();
+
+        // 1. CASE: NOT FOUND
+        if (!data || !data.found) {
+          showView(resultNotFound);
+          return;
+        }
+
+        // 2. CASE: LULUS
+        if (data.status === "LULUS") {
+          document.getElementById('success-nama').textContent = data.nama || "PESERTA";
+          
+          const isStaffAlpha = (data.program || "").toLowerCase().includes("staff alpha");
+          const komisiBox = document.getElementById('success-komisi-box');
+
+          if (isStaffAlpha) {
+            document.getElementById('success-program').textContent = "STAFF ALPHA 2026";
+            if (data.komisi) {
+              document.getElementById('success-komisi').textContent = data.komisi;
+              komisiBox.classList.remove('hidden');
+            } else {
+              komisiBox.classList.add('hidden');
+            }
+          } else {
+            // Program PPUH
+            document.getElementById('success-program').textContent = "PPUH 2026";
+            komisiBox.classList.add('hidden'); 
+          }
+
+          showView(resultSuccess);
+          return;
+        }
+
+        // 3. CASE: STATUS KOSONG (TIDAK LULUS)
+        document.getElementById('unsuccessful-nama').textContent = data.nama || "PESERTA";
+        showView(resultUnsuccessful);
+
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        showView(resultError);
+      }
+    });
+  </script>
 </body>
 </html>
