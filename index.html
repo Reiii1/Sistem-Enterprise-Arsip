@@ -19,7 +19,7 @@
           },
           colors: {
             brand: {
-              teal: '#38bdf8', // Menyesuaikan warna logo
+              teal: '#38bdf8',
               dark: '#0f172a',
             }
           }
@@ -42,7 +42,6 @@
       from { opacity: 0; transform: scale(0.8); }
       to { opacity: 1; transform: scale(1); }
     }
-    /* Animasi background pelan */
     .blob {
       animation: float 10s infinite alternate ease-in-out;
     }
@@ -54,7 +53,7 @@
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-slate-900 selection:text-white relative overflow-x-hidden">
 
-  <!-- DECORATIVE BACKGROUND BLOBS (Efek bercak warna modern) -->
+  <!-- DECORATIVE BACKGROUND BLOBS -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
     <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-teal-200/30 blur-[100px] blob"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-200/30 blur-[100px] blob" style="animation-delay: -5s;"></div>
@@ -63,7 +62,6 @@
   <!-- NAVBAR / HEADER -->
   <header class="w-full pt-8 pb-4 px-6 max-w-3xl mx-auto flex justify-between items-center z-10">
     <div class="flex items-center gap-3">
-      <!-- Logo Container diberi border halus -->
       <div id="logo-container" class="w-11 h-11 rounded-full bg-white border border-slate-200 shadow-sm text-slate-900 flex items-center justify-center font-bold text-sm tracking-tighter overflow-hidden">
         BPM
       </div>
@@ -79,10 +77,7 @@
   <!-- MAIN CONTAINER -->
   <main class="w-full max-w-xl mx-auto px-6 py-8 flex-1 flex flex-col justify-center z-10">
     
-    <!-- GLASSMORPHISM CARD WRAPPER -->
     <div class="bg-white/70 backdrop-blur-xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[2rem] p-8 sm:p-12 w-full relative overflow-hidden">
-      
-      <!-- Efek kilap ujung kartu -->
       <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-cyan-500 opacity-80"></div>
 
       <!-- 1. FORM SECTION (Default) -->
@@ -90,7 +85,6 @@
         <div class="mb-10 text-center sm:text-left">
           <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-4">
             YOUR JOURNEY<br>
-            <!-- Teks gradien -->
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600">STARTS HERE.</span>
           </h1>
           <p class="text-slate-500 text-sm sm:text-base font-medium">
@@ -205,7 +199,7 @@
         </button>
       </div>
 
-    </div> <!-- End Card Wrapper -->
+    </div> 
   </main>
 
   <!-- FOOTER -->
@@ -236,8 +230,8 @@
       YEAR: "2026",
       LOGO_TEXT: "BPM", 
       
-      // PERBAIKAN NAMA FILE LOGO (MENGGUNAKAN %20 UNTUK SPASI)
-      LOGO_URL: "LOGO%20BPM.png",    
+      // LOGO HEADER (MENGGUNAKAN URL GITHUB)
+      LOGO_URL: "https://raw.githubusercontent.com/Reiii1/Cdn-Rei/main/uploads/1791449855887.png",    
       
       INSTAGRAM_URL: "https://www.instagram.com/bpmsi_telkomuniversity/"
     };
@@ -268,7 +262,6 @@
 
       const logoContainer = document.getElementById('logo-container');
       if (CONFIG.LOGO_URL) {
-        // Fallback ditambahkan ke onerror jika gambar tetap tidak ditemukan
         logoContainer.innerHTML = `<img src="${CONFIG.LOGO_URL}" alt="Logo" class="w-full h-full object-cover rounded-full" onerror="this.style.display='none'; this.parentNode.innerText='${CONFIG.LOGO_TEXT}'"/>`;
       } else {
         logoContainer.textContent = CONFIG.LOGO_TEXT;
@@ -336,7 +329,9 @@
 
           if (isStaffAlpha) {
             document.getElementById('success-program').textContent = "STAFF ALPHA 2026";
-            programLogo.src = "StaffAlpha.png"; 
+            
+            // LOGO STAFF ALPHA DARI GITHUB CDN
+            programLogo.src = "https://raw.githubusercontent.com/Reiii1/Cdn-Rei/main/uploads/1791449935233.png"; 
             programLogoContainer.classList.remove('hidden');
 
             if (data.komisi) {
@@ -347,8 +342,9 @@
             }
           } else {
             document.getElementById('success-program').textContent = "PPUH 2026";
-            // Pastikan file "LOGO PPUH 1.png" menggunakan %20 untuk amannya
-            programLogo.src = "LOGO%20PPUH%201.png";
+            
+            // LOGO PPUH DARI GITHUB CDN
+            programLogo.src = "https://raw.githubusercontent.com/Reiii1/Cdn-Rei/main/uploads/1791449911112.png";
             programLogoContainer.classList.remove('hidden');
             
             komisiBox.classList.add('hidden'); 
